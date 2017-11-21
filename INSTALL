@@ -1,15 +1,7 @@
 Following tasks need to be done before you can run SHOWtime
 
 ====
-1. Compile port_open.c
-====
-
-The provided port_open.c program needs to be compiled as an executable into the same directory 
-as showtime.py, which can be done using the following command
-# gcc -o port_open port_open.c
-
-====
-2. Install required Python dependencies
+1. Install required Python dependencies
 ====
 
 SHOWtime and some of the provided tabs require certain Python dependencies in order 
@@ -24,7 +16,7 @@ Some of the dependencies may need the python-dev package in order to be installe
 # apt-get install python-dev
 
 ====
-3. Run SHOWtime
+2. Run SHOWtime
 ====
 
 After everything else has been done, you should be able to run SHOWtime simply by calling

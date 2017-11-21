@@ -1,5 +1,5 @@
 from context import Screen, ScreenContext
-from tab import Tab
+from tabs.tab import Tab
 
 import psutil
 import time
