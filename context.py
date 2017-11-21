@@ -34,7 +34,7 @@ class ScreenContext:
         self.port_name = port_name
         self.port = None
         
-        self.buffer = unicode("")
+        self.buffer = ""
         
         # Current text size
         self.text_size = 2
@@ -84,7 +84,7 @@ class ScreenContext:
         try:
             subprocess.call([ "./port_open", self.port_name ])
         except OSError as e:
-            print "Couldn't execute the port_open executable to set terminal parameters!"
+            print("Couldn't execute the port_open executable to set terminal parameters!", file=sys.stderr)
             
             raise e
     
@@ -92,7 +92,7 @@ class ScreenContext:
         """
         Closes the serial port
         """
-        self.buffer = unicode("\ec\e[2s\e[1r\r")
+        self.buffer = "\ec\e[2s\e[1r\r"
         self.sleep(0.1)
         
         self.port.close()
@@ -114,18 +114,18 @@ class ScreenContext:
         Returns the amount of columns, depending on the current text size
         """
         if self.orientation == Screen.HORIZONTAL:
-            return Screen.WIDTH / (self.text_size * 6)
+            return Screen.WIDTH // (self.text_size * 6)
         else:
-            return Screen.HEIGHT / (self.text_size * 6)
+            return Screen.HEIGHT // (self.text_size * 6)
     
     def get_rows(self):
         """
         Returns the amount of rows, depending on the current text size
         """
         if self.orientation == Screen.HORIZONTAL:
-            return Screen.HEIGHT / (self.text_size * 8)
+            return Screen.HEIGHT // (self.text_size * 8)
         else:
-            return Screen.WIDTH / (self.text_size * 8)
+            return Screen.WIDTH // (self.text_size * 8)
         
     # WRITING FUNCTIONS HERE
     def fg_color(self, color):

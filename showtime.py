@@ -42,7 +42,7 @@ ctx.sleep(6).reset_lcd().set_rotation(0)
 # Header
 header = Header()
 
-print "Started"
+print("Started")
 
 time_since_tab_change = 0
 last_time = time.time()
