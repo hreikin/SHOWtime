@@ -1,17 +1,16 @@
-from context import Screen, ScreenContext
-from tabs.tab import Tab
+from odroidshow.context import Screen, ScreenContext
+from odroidshow.tabs.tab import Tab
+from odroidshow.utils import format_timespan, get_progress_bar
 
 import psutil
 import time
 import humanfriendly
 
-from utils import format_timespan, get_progress_bar
-
 class SystemStats(Tab):
     def __init__(self):
         self.title = "System stats"
         
-        self.cpu_usages = [ 0.5, 0.2, 0.7, 0.1 ]
+        self.cpu_usages = [0.0] * len(psutil.cpu_percent(percpu=True))
         
         self.used_ram = 12505903
         self.total_ram = 20189390
@@ -24,7 +23,7 @@ class SystemStats(Tab):
     def render_tab(self, ctx):
         # Update system info
         self.update_sysinfo()
-        
+
         # Print CPU usage
         for i in range(0, len(self.cpu_usages)):
             cpu_usage = self.cpu_usages[i]

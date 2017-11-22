@@ -8,7 +8,7 @@ import serial
 
 from PIL import Image
 
-from utils import split_string_into_chunks
+from odroidshow.utils import split_string_into_chunks
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
@@ -158,6 +158,7 @@ class ScreenContext:
         """
         Prints provided text to screen
         """
+
         self.characters_on_line += len(text)
         if (self.characters_on_line >= self.get_columns()):
             self.characters_on_line = self.characters_on_line % self.get_columns()
@@ -255,14 +256,24 @@ class ScreenContext:
     
     def set_cursor_pos(self, x, y):
         """
-        Set cursor position
+        Set cursor position (in pixels)
         """
         self.buffer += "\e[%s;%sH" % (str(x), str(y))
         
         self.sleep()
         
         return self
-    
+
+    def set_cursor_loc(self, row, column):
+        """
+        Set cursor position (in text character coordinates)
+        """
+        self.buffer += "\e[%s;%sH" % (str(column * self.text_size * 6), str(row * self.text_size * 6))
+        
+        self.sleep()
+        
+        return self
+
     def draw_image(self, img_path, x, y):
         """
         Draw image at the specified position

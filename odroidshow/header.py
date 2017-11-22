@@ -1,4 +1,4 @@
-from context import Screen, ScreenContext
+from odroidshow.context import Screen, ScreenContext
 import time
 
 class Header:
