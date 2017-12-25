@@ -268,7 +268,7 @@ class ScreenContext:
         """
         Set cursor position (in text character coordinates)
         """
-        self.buffer += "\e[%s;%sH" % (str(column * self.text_size * 6), str(row * self.text_size * 6))
+        self.buffer += "\e[%s;%sH" % (str(column * self.text_size * 6), str(row * self.text_size * 8))
         
         self.sleep()
         
