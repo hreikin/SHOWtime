@@ -1,12 +1,14 @@
 import time
 import subprocess
+import tempfile
 import atexit
 import os
 import sys
+import serial
 
 from PIL import Image
 
-from utils import split_string_into_chunks
+from odroidshow.utils import split_string_into_chunks
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
@@ -34,7 +36,7 @@ class ScreenContext:
         self.port_name = port_name
         self.port = None
         
-        self.buffer = unicode("")
+        self.buffer = ""
         
         # Current text size
         self.text_size = 2
@@ -77,22 +79,13 @@ class ScreenContext:
         """
         Opens the serial port for writing
         """
-        self.port = open(self.port_name, "w")
-        
-        # Run the port_open executable, which sets attributes necessary
-        # to input commands correctly
-        try:
-            subprocess.call([ "./port_open", self.port_name ])
-        except OSError as e:
-            print "Couldn't execute the port_open executable to set terminal parameters!"
-            
-            raise e
+        self.port = serial.Serial(self.port_name, baudrate=500000)
     
     def cleanup(self):
         """
         Closes the serial port
         """
-        self.buffer = unicode("\ec\e[2s\e[1r\r")
+        self.buffer = "\ec\e[2s\e[1r\r"
         self.sleep(0.1)
         
         self.port.close()
@@ -101,10 +94,9 @@ class ScreenContext:
         """
         Uploads the current content of the buffer into the screen
         """
-        list = [ "echo", "-ne"]
-        
-        list.append(self.buffer)
-        subprocess.call(list, stdout=self.port)
+        self.buffer = self.buffer.replace("\\e", "\x1B")
+        self.port.write(bytes(self.buffer, encoding="ascii"))
+        self.port.flush()
         self.buffer = ""
         
         return self
@@ -114,18 +106,18 @@ class ScreenContext:
         Returns the amount of columns, depending on the current text size
         """
         if self.orientation == Screen.HORIZONTAL:
-            return Screen.WIDTH / (self.text_size * 6)
+            return Screen.WIDTH // (self.text_size * 6)
         else:
-            return Screen.HEIGHT / (self.text_size * 6)
+            return Screen.HEIGHT // (self.text_size * 6)
     
     def get_rows(self):
         """
         Returns the amount of rows, depending on the current text size
         """
         if self.orientation == Screen.HORIZONTAL:
-            return Screen.HEIGHT / (self.text_size * 8)
+            return Screen.HEIGHT // (self.text_size * 8)
         else:
-            return Screen.WIDTH / (self.text_size * 8)
+            return Screen.WIDTH // (self.text_size * 8)
         
     # WRITING FUNCTIONS HERE
     def fg_color(self, color):
@@ -166,22 +158,21 @@ class ScreenContext:
         """
         Prints provided text to screen
         """
+
         self.characters_on_line += len(text)
         if (self.characters_on_line >= self.get_columns()):
             self.characters_on_line = self.characters_on_line % self.get_columns()
-        
-        # If the text is longer than 25 characters or so
-        # sending it all at once will cause artifacts as
-        # the serial port can't keep up
-        # Split the string into chunks to prevent this
+
+        # If the text sends more characters at once than the device can handle,
+        # artifacts appear. So, split the string into chunks to prevent this.
         if split:
-            text_chunks = split_string_into_chunks(text, 25)
+            text_chunks = split_string_into_chunks(text, 10)
             
             for chunk in text_chunks:
                 self.buffer += chunk
-                self.sleep(len(chunk) * 0.0045)
+                self.sleep(len(chunk) * 0.006)
         else:
-            self.sleep(len(chunk) * 0.0045)
+            self.sleep(len(chunk) * 0.006)
             
         return self
     
@@ -265,22 +256,35 @@ class ScreenContext:
     
     def set_cursor_pos(self, x, y):
         """
-        Set cursor position
+        Set cursor position (in pixels)
         """
         self.buffer += "\e[%s;%sH" % (str(x), str(y))
         
         self.sleep()
         
         return self
-    
+
+    def set_cursor_loc(self, row, column):
+        """
+        Set cursor position (in text character coordinates)
+        """
+        self.buffer += "\e[%s;%sH" % (str(column * self.text_size * 6), str(row * self.text_size * 6))
+        
+        self.sleep()
+        
+        return self
+
     def draw_image(self, img_path, x, y):
         """
         Draw image at the specified position
         THIS METHOD ISN'T RELIABLE
         """
+
+        _, raw_path = tempfile.mkstemp()
+
         # Convert the image
         subprocess.call([ "ffmpeg", "-y", "-loglevel", "8","-i", img_path, "-vcodec",
-                          "rawvideo", "-f", "rawvideo", "-pix_fmt", "rgb565", "temp.raw" ])
+                          "rawvideo", "-f", "rawvideo", "-pix_fmt", "rgb565", raw_path ])
         
         image = Image.open(img_path)
         
@@ -292,7 +296,10 @@ class ScreenContext:
         self.sleep(0.05)
         # Call a script to cat the image data to the serial port,
         # perhaps we could handle this in Python somehow?
-        subprocess.call([ "./display_image.sh" ])
+        raw_file = open(raw_path, "rb")
+        raw_data = raw_file.read()
+        self.port.write(raw_data)
+        self.port.flush()
         self.sleep(0.05)
         
         # Add a linebreak to prevent glitches when printing text again

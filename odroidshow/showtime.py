@@ -1,13 +1,8 @@
 #!/usr/bin/env python
 
-from context import Screen, ScreenContext
-import config
-
-# Import tabs here
-from tabs.bitcoin import Bitcoind, BitcoinPrice
-from tabs.sysinfo import SystemStats, DiskUsage
-
-from header import Header
+from odroidshow.context import Screen, ScreenContext
+from odroidshow.header import Header
+import odroidshow.config as config
 
 import atexit
 import time
@@ -37,12 +32,12 @@ ctx = ScreenContext(args.port)
 atexit.register(ctx.cleanup)
 
 # Wait 6 seconds for the screen to boot up before we start uploading anything
-ctx.sleep(6).reset_lcd().set_rotation(0)
+ctx.sleep(6).reset_lcd().set_rotation(Screen.VERTICAL)
 
 # Header
 header = Header()
 
-print "Started"
+print("Started")
 
 time_since_tab_change = 0
 last_time = time.time()
@@ -50,7 +45,7 @@ last_time = time.time()
 while True:
     header.render_header(ctx, current_tab, tabs[current_tab].title, len(tabs))
     tabs[current_tab].render_tab(ctx)
-    
+
     time_since_tab_change += time.time() - last_time
     last_time = time.time()
     
