@@ -170,9 +170,9 @@ class ScreenContext:
             
             for chunk in text_chunks:
                 self.buffer += chunk
-                self.sleep(len(chunk) * 0.0045)
+                self.sleep(len(chunk) * 0.006)
         else:
-            self.sleep(len(chunk) * 0.0045)
+            self.sleep(len(chunk) * 0.006)
             
         return self
     
