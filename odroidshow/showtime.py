@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from odroidshow.context import Screen, ScreenContext
-from odroidshow.header import Header
-import odroidshow.config as config
+from context import Screen, ScreenContext
+from header import Header
+import config as config
 
 import atexit
 import time

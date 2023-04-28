@@ -8,7 +8,7 @@ import serial
 
 from PIL import Image
 
-from odroidshow.utils import split_string_into_chunks
+from utils import split_string_into_chunks
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 

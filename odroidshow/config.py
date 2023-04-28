@@ -1,7 +1,7 @@
-from odroidshow.tabs.hello import HelloTab
+from tabs.hello import HelloTab
 #from odroidshow.tabs.bitcoin import BitcoinPrice, Bitcoind
-#from odroidshow.tabs.sysinfo import SystemStats, DiskUsage
-#from odroidshow.tabs.uptime import WebsiteUptime
+from tabs.sysinfo import SystemStats, DiskUsage
+from tabs.uptime import WebsiteUptime
 
 import os
 
@@ -19,12 +19,12 @@ tabs = [
          #BitcoinPrice(),
          
          # Displays CPU, RAM usage and uptime
-         #SystemStats(),
+         SystemStats(),
          
          # Displays disk usage
-         #DiskUsage(),
+         DiskUsage(),
          
          # Tracks website uptime
-         #WebsiteUptime({"websites": [ {"name": "Google",
-         #                              "url": "http://google.com"} ] })
+         WebsiteUptime({"websites": [ {"name": "Google",
+                                       "url": "http://google.com"} ] })
        ]

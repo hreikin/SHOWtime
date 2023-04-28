@@ -1,7 +1,7 @@
 from context import Screen, ScreenContext
 from tabs.tab import Tab
 
-import urllib2
+from urllib.request import urlopen
 import time
 
 from utils import format_timespan
@@ -35,7 +35,7 @@ class WebsiteUptime(Tab):
                 # Try to get a response
                 # If we get an exception assume the site is down
                 try:
-                    response = urllib2.urlopen(website["url"], timeout=5)
+                    response = urlopen(website["url"], timeout=5)
                 except:
                     down = True
                     
@@ -54,7 +54,7 @@ class WebsiteUptime(Tab):
     def render_tab(self, ctx):
         self.update_uptime()
         
-        for website, status in self.website_status.iteritems():
+        for website, status in self.website_status.items():
             ctx.fg_color(Screen.WHITE).write_line(website)
             
             if status:

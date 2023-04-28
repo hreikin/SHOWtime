@@ -1,6 +1,6 @@
-from odroidshow.context import Screen, ScreenContext
-from odroidshow.tabs.tab import Tab
-from odroidshow.utils import format_timespan, get_progress_bar
+from context import Screen, ScreenContext
+from tabs.tab import Tab
+from utils import format_timespan, get_progress_bar
 
 import psutil
 import time
@@ -85,7 +85,7 @@ class DiskUsage(Tab):
     def render_tab(self, ctx):
         self.update_disk_usage()
         
-        for device_name, usage in self.disk_usage.iteritems():
+        for device_name, usage in self.disk_usage.items():
             ctx.write_line("%s" % device_name)
             
             ctx.fg_color(Screen.YELLOW).write_line("%s / %s" % (humanfriendly.format_size(usage["used"]),

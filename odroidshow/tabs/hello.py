@@ -1,5 +1,5 @@
-from odroidshow.context import Screen, ScreenContext
-from odroidshow.tabs.tab import Tab
+from context import Screen, ScreenContext
+from tabs.tab import Tab
 
 import time
 
