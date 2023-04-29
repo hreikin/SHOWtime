@@ -146,7 +146,7 @@ class ScreenContext:
         """
         Moves cursor to the beginning of the next line
         """
-        self.buffer += r'\n\r'
+        self.buffer += f'\n\r'
         
         self.characters_on_line = 0
         
