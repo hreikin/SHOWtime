@@ -261,6 +261,7 @@ class ScreenContext:
         Accepts values between 0-3, where 1 stands for clockwise 90 degree rotation,
         2 for 180 degree rotation, etc.
         """
+        self.orientation = rotation
         self.buffer += f"{Screen.ESCAPE_CHAR}[{self.orientation}r"
         self.sleep()
         
