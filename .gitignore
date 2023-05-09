@@ -1,12 +1,8 @@
-# Environmnts
-env
-.env
-venv
-.venv
-
-bitcoinrpc_password.txt
-temp.raw
-example.py
+# Environments
+env/
+.env/
+venv/
+.venv/
 
 *.o
 
