@@ -31,6 +31,40 @@ class Screen(object):
     WIDTH = 320
     HEIGHT = 240
 
+    # ANSI Escape Commands
+    ESCAPE_CHAR = "\x1b"
+    CARRIAGE_RETURN = "\x0d"
+    LINEFEED = "\x0a"
+
+    # Foreground Colours
+    FG_BLACK = f"{ESCAPE_CHAR}[30m"
+    FG_RED = f"{ESCAPE_CHAR}[31m"
+    FG_GREEN = f"{ESCAPE_CHAR}[32m"
+    FG_YELLOW = f"{ESCAPE_CHAR}[33m"
+    FG_BLUE = f"{ESCAPE_CHAR}[34m"
+    FG_MAGENTA = f"{ESCAPE_CHAR}[35m"
+    FG_CYAN = f"{ESCAPE_CHAR}[36m"
+    FG_WHITE = f"{ESCAPE_CHAR}[37m"
+    FG_DEFAULT = f"{ESCAPE_CHAR}[39m"   # Default is black.
+ 
+    # Background Colours
+    BG_BLACK = f"{ESCAPE_CHAR}[40m"
+    BG_RED = f"{ESCAPE_CHAR}[41m"
+    BG_GREEN = f"{ESCAPE_CHAR}[42m"
+    BG_YELLOW = f"{ESCAPE_CHAR}[43m"
+    BG_BLUE = f"{ESCAPE_CHAR}[44m"
+    BG_MAGENTA = f"{ESCAPE_CHAR}[45m"
+    BG_CYAN = f"{ESCAPE_CHAR}[46m"
+    BG_WHITE = f"{ESCAPE_CHAR}[47m"
+    BG_DEFAULT = f"{ESCAPE_CHAR}[49m"   # Default is black.
+
+    RESET_STYLING = f"{ESCAPE_CHAR}[0m"
+    CLOSE_PORT = f"{ESCAPE_CHAR}c{ESCAPE_CHAR}[2s{ESCAPE_CHAR}[1r\r"
+
+    # VT100 Escape Commands
+    ERASE = f"{ESCAPE_CHAR}[2J"
+    HOME = f"{ESCAPE_CHAR}[H"
+
 class ScreenContext:
     def __init__(self, port_name):
         self.port_name = port_name
@@ -85,7 +119,7 @@ class ScreenContext:
         """
         Closes the serial port
         """
-        self.buffer = "\ec\e[2s\e[1r\r"
+        self.buffer = Screen.CLOSE_PORT
         self.sleep(0.1)
         
         self.port.close()
@@ -124,9 +158,7 @@ class ScreenContext:
         """
         Set foreground/text color to one of seven colors defined in Screen, eg. Screen.CYAN
         """
-        self.current_fg_color = color
-        
-        self.buffer += "\e[%s%sm" % (str(Screen.FOREGROUND), str(color))
+        self.buffer += f"{colour}"
         self.sleep()
         
         return self
@@ -135,9 +167,7 @@ class ScreenContext:
         """
         Set background color to one of seven colors defined in Screen, eg. Screen.CYAN
         """
-        self.current_bg_color = color
-        
-        self.buffer += "\e[%s%sm" % (str(Screen.BACKGROUND), str(color))
+        self.buffer += f"{colour}"
         self.sleep()
         
         return self
@@ -146,7 +176,7 @@ class ScreenContext:
         """
         Moves cursor to the beginning of the next line
         """
-        self.buffer += f'\n\r'
+        self.buffer += f"{Screen.LINEFEED}{Screen.CARRIAGE_RETURN}"
         
         self.characters_on_line = 0
         
@@ -200,7 +230,7 @@ class ScreenContext:
         """
         Reset the LCD screen
         """
-        self.buffer += "\ec"
+        self.buffer += Screen.RESET_STYLING
         self.sleep()
         
         return self
@@ -209,7 +239,7 @@ class ScreenContext:
         """
         Move cursor to home, eg. 0x0
         """
-        self.buffer += "\e[H"
+        self.buffer += Screen.HOME
         self.sleep(0.1)
         self.characters_on_line = 0
         
@@ -222,7 +252,7 @@ class ScreenContext:
         """
         Erase everything drawn on the screen
         """
-        self.buffer += "\e[2J"
+        self.buffer += Screen.ERASE
         self.sleep()
         
         return self
@@ -231,7 +261,7 @@ class ScreenContext:
         """
         Set text size. Font width is set to 6*size and font height to 8*size
         """
-        self.buffer += "\e[%ss" % str(size)
+        self.buffer += f"{Screen.ESCAPE_CHAR}[{size}s"
         self.text_size = size
         self.sleep()
         
@@ -243,13 +273,7 @@ class ScreenContext:
         Accepts values between 0-3, where 1 stands for clockwise 90 degree rotation,
         2 for 180 degree rotation, etc.
         """
-        self.buffer += "\e[%sr" % str(rotation)
-        
-        if rotation % 2 == 0:
-            self.orientation = Screen.VERTICAL
-        else:
-            self.orientation = Screen.HORIZONTAL
-            
+        self.buffer += f"{Screen.ESCAPE_CHAR}[{self.orientation}r"
         self.sleep()
         
         return self
@@ -258,7 +282,7 @@ class ScreenContext:
         """
         Set cursor position (in pixels)
         """
-        self.buffer += "\e[%s;%sH" % (str(x), str(y))
+        self.buffer += f"{Screen.ESCAPE_CHAR}[{x};{y}H"
         
         self.sleep()
         
@@ -268,7 +292,7 @@ class ScreenContext:
         """
         Set cursor position (in text character coordinates)
         """
-        self.buffer += "\e[%s;%sH" % (str(column * self.text_size * 6), str(row * self.text_size * 8))
+        self.buffer += f"{Screen.ESCAPE_CHAR}[{column * self.text_size * 6};{row * self.text_size * 8}H"
         
         self.sleep()
         
@@ -291,7 +315,7 @@ class ScreenContext:
         width = image.size[0]
         height = image.size[1]
         
-        self.write("\e[%d;%d,%d;%di" % (x, y, width+x, height+y))
+        self.write(f"{Screen.ESCAPE_CHAR}[{x};{y},{width+x};{height+y}i")
         
         self.sleep(0.05)
         # Call a script to cat the image data to the serial port,
