@@ -5,7 +5,7 @@ class Header:
     
     def render_header(self, ctx, tab, tab_name, tab_count):
         # Print top row (tab name)
-        ctx.home().bg_color(Screen.RED).fg_color(Screen.WHITE).write(tab_name)
+        ctx.home().set_bg_colour(Screen.BG_RED).set_fg_colour(Screen.FG_WHITE).write(tab_name)
         
         columns = ctx.get_columns() - len(tab_name)
         empty_line = ""
@@ -29,4 +29,4 @@ class Header:
         # Draw the time
         ctx.write(empty_line + time_str)
                 
-        ctx.bg_color(Screen.BLACK)
+        ctx.set_bg_colour(Screen.BG_BLACK)

@@ -9,7 +9,7 @@ class HelloTab(Tab):
         
     def render_tab(self, ctx):
 
-        ctx.bg_color(Screen.BLACK)
-        ctx.fg_color(Screen.WHITE)
+        ctx.set_bg_colour(Screen.BG_BLACK)
+        ctx.set_fg_colour(Screen.FG_WHITE)
 
         ctx.write_line("Hello, World!")

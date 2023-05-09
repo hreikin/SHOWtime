@@ -55,9 +55,9 @@ class WebsiteUptime(Tab):
         self.update_uptime()
         
         for website, status in self.website_status.items():
-            ctx.fg_color(Screen.WHITE).write_line(website)
+            ctx.set_fg_colour(Screen.FG_WHITE).write_line(website)
             
             if status:
-                ctx.fg_color(Screen.GREEN).write_line("UP").linebreak()
+                ctx.set_fg_colour(Screen.FG_GREEN).write_line("UP").linebreak()
             else:
-                ctx.fg_color(Screen.RED).write_line("DOWN for %s" % format_timespan(int(time.time() - self.downtime[website]))).linebreak()
+                ctx.set_fg_colour(Screen.FG_RED).write_line("DOWN for %s" % format_timespan(int(time.time() - self.downtime[website]))).linebreak()

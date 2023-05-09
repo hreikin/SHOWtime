@@ -28,39 +28,39 @@ class SystemStats(Tab):
         for i in range(0, len(self.cpu_usages)):
             cpu_usage = self.cpu_usages[i]
             
-            ctx.fg_color(Screen.WHITE)
+            ctx.set_fg_colour(Screen.FG_WHITE)
             
-            ctx.write("CPU %d:" % i).fg_color(Screen.YELLOW).write_line(" %.2f %%" % (cpu_usage*100)).fg_color(Screen.WHITE).write("[")
+            ctx.write("CPU %d:" % i).set_fg_colour(Screen.FG_YELLOW).write_line(" %.2f %%" % (cpu_usage*100)).set_fg_colour(Screen.FG_WHITE).write("[")
             
             if cpu_usage < self.YELLOW_THRESHOLD:
-                ctx.fg_color(Screen.GREEN)
+                ctx.set_fg_colour(Screen.FG_GREEN)
             elif cpu_usage >= self.YELLOW_THRESHOLD and cpu_usage <= self.RED_THRESHOLD:
-                ctx.fg_color(Screen.YELLOW)
+                ctx.set_fg_colour(Screen.FG_YELLOW)
             else:
-                ctx.fg_color(Screen.RED)
+                ctx.set_fg_colour(Screen.FG_RED)
                 
-            ctx.write(get_progress_bar(ctx.get_columns()-2, cpu_usage)).fg_color(Screen.WHITE).write("]")
+            ctx.write(get_progress_bar(ctx.get_columns()-2, cpu_usage)).set_fg_colour(Screen.FG_WHITE).write("]")
             
         # Print RAM
         used = humanfriendly.format_size(self.used_ram)
         total = humanfriendly.format_size(self.total_ram)
-        ctx.linebreak().write_line("RAM").fg_color(Screen.YELLOW).write_line("%s / %s" % (used, total)).fg_color(Screen.WHITE)
+        ctx.linebreak().write_line("RAM").set_fg_colour(Screen.FG_YELLOW).write_line("%s / %s" % (used, total)).set_fg_colour(Screen.FG_WHITE)
         
         ram_usage = float(self.used_ram) / float(self.total_ram)
             
         ctx.write("[")
         
         if ram_usage < 0.33:
-            ctx.fg_color(Screen.GREEN)
+            ctx.set_fg_colour(Screen.FG_GREEN)
         elif ram_usage >= 0.33 and ram_usage <= 0.66:
-            ctx.fg_color(Screen.YELLOW)
+            ctx.set_fg_colour(Screen.FG_YELLOW)
         else:
-            ctx.fg_color(Screen.RED)
+            ctx.set_fg_colour(Screen.FG_RED)
             
-        ctx.write(get_progress_bar(ctx.get_columns()-2, ram_usage)).fg_color(Screen.WHITE).write("]")
+        ctx.write(get_progress_bar(ctx.get_columns()-2, ram_usage)).set_fg_colour(Screen.FG_WHITE).write("]")
         
         # Print uptime
-        ctx.linebreak().write_line("Uptime:").fg_color(Screen.YELLOW).write_line("%s" % format_timespan(self.uptime)).fg_color(Screen.WHITE)
+        ctx.linebreak().write_line("Uptime:").set_fg_colour(Screen.FG_YELLOW).write_line("%s" % format_timespan(self.uptime)).set_fg_colour(Screen.FG_WHITE)
     
     def update_sysinfo(self):
         cpu_times = psutil.cpu_percent(percpu=True)
@@ -88,21 +88,21 @@ class DiskUsage(Tab):
         for device_name, usage in self.disk_usage.items():
             ctx.write_line("%s" % device_name)
             
-            ctx.fg_color(Screen.YELLOW).write_line("%s / %s" % (humanfriendly.format_size(usage["used"]),
+            ctx.set_fg_colour(Screen.FG_YELLOW).write_line("%s / %s" % (humanfriendly.format_size(usage["used"]),
                                                                 humanfriendly.format_size(usage["total"])))
             
-            ctx.fg_color(Screen.WHITE).write("[")
+            ctx.set_fg_colour(Screen.FG_WHITE).write("[")
             
             usage_percent = float(usage["used"]) / float(usage["total"])
             
             if usage_percent < self.YELLOW_THRESHOLD:
-                ctx.fg_color(Screen.GREEN)
+                ctx.set_fg_colour(Screen.FG_GREEN)
             elif usage_percent >= self.YELLOW_THRESHOLD and usage_percent <= self.RED_THRESHOLD:
-                ctx.fg_color(Screen.YELLOW)
+                ctx.set_fg_colour(Screen.FG_YELLOW)
             else:
-                ctx.fg_color(Screen.RED)
+                ctx.set_fg_colour(Screen.FG_RED)
                 
-            ctx.write(get_progress_bar(ctx.get_columns()-2, usage_percent)).fg_color(Screen.WHITE).write("]").linebreak()
+            ctx.write(get_progress_bar(ctx.get_columns()-2, usage_percent)).set_fg_colour(Screen.FG_WHITE).write("]").linebreak()
         
     def update_disk_usage(self):
         disk_partitions = psutil.disk_partitions()
