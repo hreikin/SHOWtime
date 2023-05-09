@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from context import Screen, ScreenContext
-from header import Header
-import config as config
+from showtime.context import Screen, ScreenContext
+from showtime.header import Header
+import showtime.config as config
 
 import atexit
 import time
@@ -32,7 +32,7 @@ ctx = ScreenContext(args.port)
 atexit.register(ctx.cleanup)
 
 # Wait 6 seconds for the screen to boot up before we start uploading anything
-ctx.sleep(6).reset_lcd().set_rotation(Screen.VERTICAL)
+ctx.sleep(6).reset_lcd_styling().set_rotation(Screen.PORTRAIT)
 
 # Header
 header = Header()
