@@ -214,10 +214,10 @@ class ScreenContext:
         self.write(buffer_text)
         
         return self
-    
-    def reset_lcd(self):
+
+    def reset_lcd_styling(self):
         """
-        Reset the LCD screen
+        Reset the styling applied to the LCD screen
         """
         self.buffer += Screen.RESET_STYLING
         self.sleep()
