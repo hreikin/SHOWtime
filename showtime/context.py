@@ -52,26 +52,21 @@ class Screen(object):
     HOME = f"{ESCAPE_CHAR}[H"
 
 class ScreenContext:
-    def __init__(self, port_name):
+    def __init__(self, port_name="/dev/ttyUSB0", text_size=2, orientation=Screen.LANDSCAPE, fg_colour=Screen.FG_YELLOW, bg_colour=Screen.BG_BLACK):
         self.port_name = port_name
-        self.port = None
-        
-        self.buffer = ""
-        
-        # Current text size
-        self.text_size = 2
-        self.orientation = Screen.HORIZONTAL
-        
-        # Current colors
-        self.current_fg_color = Screen.WHITE
-        self.current_bg_color = Screen.BLACK
-        
         self.characters_on_line = 0
-        
+        self.buffer = ""
         self.open_port()
+        # Wait 6 seconds for the screen to boot up before we start uploading anything
+        self.sleep(6)
+        # Reset the LCD styling and set the rotation
+        self.reset_lcd_styling()
+        self.set_rotation(orientation)
         # Set the foreground and background colours
         self.set_fg_colour(fg_colour)
         self.set_bg_colour(bg_colour)
+        self.set_text_size(text_size)
+
     def reset_screen(self):
         """
         Reset screen so that it is ready for drawing
@@ -109,14 +104,12 @@ class ScreenContext:
         """
         self.buffer = Screen.CLOSE_PORT
         self.sleep(0.1)
-        
         self.port.close()
         
     def push_to_serial(self):
         """
         Uploads the current content of the buffer into the screen
         """
-        self.buffer = self.buffer.replace("\\e", "\x1B")
         self.port.write(bytes(self.buffer, encoding="ascii"))
         self.port.flush()
         self.buffer = ""
