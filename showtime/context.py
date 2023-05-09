@@ -138,23 +138,24 @@ class ScreenContext:
             return Screen.HEIGHT // (self.text_size * 8)
         else:
             return Screen.WIDTH // (self.text_size * 8)
-        
-    # WRITING FUNCTIONS HERE
-    def fg_color(self, color):
+    
+    def set_fg_colour(self, colour):
         """
-        Set foreground/text color to one of seven colors defined in Screen, eg. Screen.CYAN
+        Set foreground/text color to one of seven colors defined in Screen, eg. Screen.FG_CYAN
         """
         self.buffer += f"{colour}"
         self.sleep()
+        self.current_fg_colour = colour
         
         return self
     
-    def bg_color(self, color):
+    def set_bg_colour(self, colour):
         """
-        Set background color to one of seven colors defined in Screen, eg. Screen.CYAN
+        Set background color to one of seven colors defined in Screen, eg. Screen.BG_CYAN
         """
         self.buffer += f"{colour}"
         self.sleep()
+        self.current_bg_colour = colour
         
         return self
     
