@@ -8,9 +8,7 @@ import serial
 
 from PIL import Image
 
-from utils import split_string_into_chunks
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
+from showtime.utils import split_string_into_chunks
 
 class Screen(object):
     PORTRAIT = 0 or 2
