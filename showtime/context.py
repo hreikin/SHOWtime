@@ -66,6 +66,7 @@ class ScreenContext:
         self.set_fg_colour(fg_colour)
         self.set_bg_colour(bg_colour)
         self.set_text_size(text_size)
+        atexit.register(self.cleanup)
 
     def reset_screen(self):
         """
