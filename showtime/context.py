@@ -13,20 +13,8 @@ from utils import split_string_into_chunks
 sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
 class Screen(object):
-    FOREGROUND = 3
-    BACKGROUND = 4
-    
-    BLACK = 0
-    RED = 1
-    GREEN = 2
-    YELLOW = 3
-    BLUE = 4
-    MAGENTA = 5
-    CYAN = 6
-    WHITE = 7
-    
-    VERTICAL = 0
-    HORIZONTAL = 1
+    PORTRAIT = 0 or 2
+    LANDSCAPE = 1 or 3
     
     WIDTH = 320
     HEIGHT = 240
@@ -139,7 +127,7 @@ class ScreenContext:
         """
         Returns the amount of columns, depending on the current text size
         """
-        if self.orientation == Screen.HORIZONTAL:
+        if self.orientation == Screen.LANDSCAPE:
             return Screen.WIDTH // (self.text_size * 6)
         else:
             return Screen.HEIGHT // (self.text_size * 6)
@@ -148,7 +136,7 @@ class ScreenContext:
         """
         Returns the amount of rows, depending on the current text size
         """
-        if self.orientation == Screen.HORIZONTAL:
+        if self.orientation == Screen.LANDSCAPE:
             return Screen.HEIGHT // (self.text_size * 8)
         else:
             return Screen.WIDTH // (self.text_size * 8)
