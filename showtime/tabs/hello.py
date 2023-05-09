@@ -1,5 +1,5 @@
-from context import Screen, ScreenContext
-from tabs.tab import Tab
+from showtime.context import Screen, ScreenContext
+from showtime.tabs.tab import Tab
 
 import time
 

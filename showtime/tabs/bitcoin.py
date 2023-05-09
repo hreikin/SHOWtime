@@ -1,7 +1,7 @@
-from context import Screen, ScreenContext
-from tabs.tab import Tab
+from showtime.context import Screen, ScreenContext
+from showtime.tabs.tab import Tab
 
-from utils import format_timespan
+from showtime.utils import format_timespan
 
 import sys
 import time

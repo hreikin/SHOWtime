@@ -1,10 +1,10 @@
-from context import Screen, ScreenContext
-from tabs.tab import Tab
+from showtime.context import Screen, ScreenContext
+from showtime.tabs.tab import Tab
 
 from urllib.request import urlopen
 import time
 
-from utils import format_timespan
+from showtime.utils import format_timespan
 
 class WebsiteUptime(Tab):
     def __init__(self, config):

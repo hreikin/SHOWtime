@@ -1,7 +1,7 @@
-from tabs.hello import HelloTab
-#from odroidshow.tabs.bitcoin import BitcoinPrice, Bitcoind
-from tabs.sysinfo import SystemStats, DiskUsage
-from tabs.uptime import WebsiteUptime
+from showtime.tabs.hello import HelloTab
+#from showtime.tabs.bitcoin import BitcoinPrice, Bitcoind
+from showtime.tabs.sysinfo import SystemStats, DiskUsage
+from showtime.tabs.uptime import WebsiteUptime
 
 import os
 
