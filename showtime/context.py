@@ -69,7 +69,9 @@ class ScreenContext:
         self.characters_on_line = 0
         
         self.open_port()
-    
+        # Set the foreground and background colours
+        self.set_fg_colour(fg_colour)
+        self.set_bg_colour(bg_colour)
     def reset_screen(self):
         """
         Reset screen so that it is ready for drawing
@@ -231,8 +233,7 @@ class ScreenContext:
         self.characters_on_line = 0
         
         # Colors have to be set again after going home otherwise glitches occur
-        self.bg_color(self.current_bg_color).fg_color(self.current_fg_color)
-        
+        self.set_bg_colour(self.current_bg_colour).set_fg_colour(self.current_fg_colour)
         return self
     
     def erase_screen(self):
