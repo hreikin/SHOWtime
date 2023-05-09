@@ -76,7 +76,7 @@ class ScreenContext:
         """
         Reset screen so that it is ready for drawing
         """
-        self.reset_lcd().erase_screen().home()
+        self.reset_lcd_styling().erase_screen().home()
         
         return self
     
