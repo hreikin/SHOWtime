@@ -19,7 +19,7 @@ class Tab(BaseComponent):
 class Header(BaseComponent):
     def __init__(self, config={}):
         self.config = config
-        super(Tab, self).__init__(self.config)
+        super(Header, self).__init__(self.config)
 
     def render(self, ctx, tab_idx, title, tab_count):
         # Print top row (title)
