@@ -11,7 +11,7 @@ class BaseComponent():
 class Tab(BaseComponent):
     def __init__(self, config=dict(), title=str()):
         self.config = config
-        self.title - title
+        self.title = title
         super(Tab, self).__init__(self.title)
     
     def render(self, ctx):
