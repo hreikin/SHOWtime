@@ -2,24 +2,25 @@ from showtime.context import Screen, ScreenContext
 import time
 
 class BaseComponent():
-    def __init__(self, config={}):
-        self.config = config
+    def __init__(self, title=str()):
+        self.title = title
     
     def render(self, ctx):
         raise NotImplementedError(f"'render()' not implemented on {self.__class__.__name__} UI component!")
 
 class Tab(BaseComponent):
-    def __init__(self, config={}):
+    def __init__(self, config=dict(), title=str()):
         self.config = config
-        super(Tab, self).__init__(self.config)
+        self.title - title
+        super(Tab, self).__init__(self.title)
     
     def render(self, ctx):
         return super().render(ctx)
 
 class Header(BaseComponent):
-    def __init__(self, config={}):
-        self.config = config
-        super(Header, self).__init__(self.config)
+    def __init__(self, title=str()):
+        self.title = title
+        super(Header, self).__init__(self.title)
 
     def render(self, ctx, tab_idx, title, tab_count):
         # Print top row (title)
