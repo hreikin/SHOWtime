@@ -41,16 +41,11 @@ tabs = [
 
 current_tab = default_tab
 
-ctx = ScreenContext(args.port, fg_colour=Screen.FG_WHITE, bg_colour=Screen.BG_BLUE)
-
-# Wait 6 seconds for the screen to boot up before we start uploading anything
-ctx.sleep(6).reset_lcd_styling().set_rotation(Screen.PORTRAIT)
-ctx.fill_with_colour()
+ctx = ScreenContext(args.port, orientation=2, fg_colour=Screen.FG_WHITE, bg_colour=Screen.BG_BLUE)
+print("Screen context ready.")
 
 # Header
 header = Header()
-
-print("Started")
 
 time_since_tab_change = 0
 last_time = time.time()
