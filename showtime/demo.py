@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from showtime.context import Screen, ScreenContext
-from showtime.header import Header
-import showtime.config as config
+from showtime.ui import Header
+from showtime.tabs import HelloTab, SystemStats, DiskUsage, WebsiteUptime
 
 import atexit
 import time
@@ -24,15 +24,28 @@ args = parser.parse_args()
 default_tab = args.tab - 1
 tab_change_interval = args.time
 
-tabs = config.tabs
+# Add any tabs you want to be visible here
+tabs = [
+         HelloTab(),
+         
+         # Displays CPU, RAM usage and uptime
+         SystemStats(),
+         
+         # Displays disk usage
+         DiskUsage(),
+         
+         # Tracks website uptime
+         WebsiteUptime({"websites": [ {"name": "Google",
+                                       "url": "http://google.com"} ] })
+       ]
+
 current_tab = default_tab
 
-ctx = ScreenContext(args.port)
-
-atexit.register(ctx.cleanup)
+ctx = ScreenContext(args.port, fg_colour=Screen.FG_WHITE, bg_colour=Screen.BG_BLUE)
 
 # Wait 6 seconds for the screen to boot up before we start uploading anything
 ctx.sleep(6).reset_lcd_styling().set_rotation(Screen.PORTRAIT)
+ctx.fill_with_colour()
 
 # Header
 header = Header()
@@ -43,8 +56,8 @@ time_since_tab_change = 0
 last_time = time.time()
 
 while True:
-    header.render_header(ctx, current_tab, tabs[current_tab].title, len(tabs))
-    tabs[current_tab].render_tab(ctx)
+    header.render(ctx, current_tab, tabs[current_tab].title, len(tabs))
+    tabs[current_tab].render(ctx)
 
     time_since_tab_change += time.time() - last_time
     last_time = time.time()
