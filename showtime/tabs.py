@@ -1,10 +1,23 @@
 from showtime.context import Screen, ScreenContext
-from showtime.tabs.tab import Tab
+from showtime.ui import Tab
 from showtime.utils import format_timespan, get_progress_bar
 
+import time
 import psutil
 import time
 import humanfriendly
+from urllib.request import urlopen
+
+class HelloTab(Tab):
+    def __init__(self):
+        self.title = "Hello World Tab"
+        
+    def render_tab(self, ctx):
+
+        ctx.set_bg_colour(Screen.BG_BLACK)
+        ctx.set_fg_colour(Screen.FG_WHITE)
+
+        ctx.write_line("Hello, World!")
 
 class SystemStats(Tab):
     def __init__(self):
@@ -113,5 +126,59 @@ class DiskUsage(Tab):
                 
                 self.disk_usage[disk_partition.mountpoint] = {"total": disk_usage.total,
                                                               "used": disk_usage.used}
+
+class WebsiteUptime(Tab):
+    def __init__(self, config):
+        self.title = "Website uptime"
+        
+        self.websites = config["websites"]
+        
+        # Websites' uptime status as a bool
+        self.website_status = {}
+        
+        # Timestamps of when websites went down
+        self.downtime = {}
+            
+        # Timestamp of the last update
+        self.last_update = 0
+        
+        for website in self.websites:
+            self.downtime[website["name"]] = -1
+        
+    def update_uptime(self):
+        current_time = time.time()
+        
+        if current_time >= self.last_update + 60:
+            for website in self.websites:
+                # Is the website down?
+                down = False
                 
-                
+                # Try to get a response
+                # If we get an exception assume the site is down
+                try:
+                    response = urlopen(website["url"], timeout=5)
+                except:
+                    down = True
+                    
+                if not down:
+                    self.website_status[website["name"]] = True
+                    
+                    self.downtime[website["name"]] = -1
+                else:
+                    self.website_status[website["name"]] = False
+                    
+                    if self.downtime[website["name"]] == -1:
+                        self.downtime[website["name"]] = int(time.time())
+                        
+            self.last_update = current_time
+                    
+    def render_tab(self, ctx):
+        self.update_uptime()
+        
+        for website, status in self.website_status.items():
+            ctx.set_fg_colour(Screen.FG_WHITE).write_line(website)
+            
+            if status:
+                ctx.set_fg_colour(Screen.FG_GREEN).write_line("UP").linebreak()
+            else:
+                ctx.set_fg_colour(Screen.FG_RED).write_line("DOWN for %s" % format_timespan(int(time.time() - self.downtime[website]))).linebreak()
