@@ -12,11 +12,7 @@ class HelloTab(Tab):
     def __init__(self):
         self.title = "Hello World Tab"
         
-    def render_tab(self, ctx):
-
-        ctx.set_bg_colour(Screen.BG_BLACK)
-        ctx.set_fg_colour(Screen.FG_WHITE)
-
+    def render(self, ctx):
         ctx.write_line("Hello, World!")
 
 class SystemStats(Tab):
@@ -33,7 +29,7 @@ class SystemStats(Tab):
         
         self.uptime = 0
         
-    def render_tab(self, ctx):
+    def render(self, ctx):
         # Update system info
         self.update_sysinfo()
 
@@ -95,7 +91,7 @@ class DiskUsage(Tab):
         self.YELLOW_THRESHOLD = 0.33
         self.RED_THRESHOLD = 0.66
         
-    def render_tab(self, ctx):
+    def render(self, ctx):
         self.update_disk_usage()
         
         for device_name, usage in self.disk_usage.items():
@@ -172,7 +168,7 @@ class WebsiteUptime(Tab):
                         
             self.last_update = current_time
                     
-    def render_tab(self, ctx):
+    def render(self, ctx):
         self.update_uptime()
         
         for website, status in self.website_status.items():
