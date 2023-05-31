@@ -24,28 +24,17 @@ class Header(BaseComponent):
 
     def render(self, ctx, tab_idx, title, tab_count):
         # Print top row (title)
-        ctx.home().set_bg_colour(ctx.current_bg_colour).set_fg_colour(ctx.current_fg_colour).write(title)
+        ctx.home().write_line(title)
         
-        columns = ctx.get_columns() - len(title)
-        empty_line = ""
-        for i in range(0, columns):
-            empty_line += " "
-            
-        ctx.write(empty_line)
-        
-        # Print bottom row (tabs)
-        characters_drawn = 0
-        
-        ctx.write("%d / %d" % (tab_idx+1, tab_count))
+        # Print bottom row (tabs only)
+        ctx.write(f"{tab_idx+1}/{tab_count}")
         
         time_str = time.strftime("%H:%M")
         
-        columns = ctx.get_columns() - len("%d / %d" % (tab_idx+1, tab_count)) - len(time_str)
+        columns = ctx.get_columns() - len(f"{tab_idx+1}/{tab_count}") - len(time_str)
         empty_line = ""
         for i in range(0, columns):
             empty_line += " "
             
-        # Draw the time
+        # Print the empty space and time
         ctx.write(empty_line + time_str)
-                
-        ctx.set_bg_colour(Screen.BG_BLACK)
