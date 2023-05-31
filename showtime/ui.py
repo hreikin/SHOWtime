@@ -22,7 +22,7 @@ class Header(BaseComponent):
         self.title = title
         super(Header, self).__init__(self.title)
 
-    def render(self, ctx, tab_idx, title, tab_count):
+    def render(self, ctx, tab_idx=0, title="Odroid SHOW", tab_count=1):
         # Print top row (title)
         ctx.home().write_line(title)
         

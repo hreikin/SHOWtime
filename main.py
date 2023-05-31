@@ -14,8 +14,8 @@ parser.add_argument("--port", "-p",
                     type=str, default="/dev/ttyUSB0")
 args = parser.parse_args()
 
-ctx = ScreenContext(args.port, text_size=2, orientation=1, fg_colour=Screen.FG_WHITE, bg_colour=Screen.BG_BLUE)
+ctx = ScreenContext(args.port, text_size=2, orientation=2, fg_colour=Screen.FG_WHITE, bg_colour=Screen.BG_BLUE)
 header = Header()
 
 while True:
-    header.render(ctx, 0, "default title", 1)
+    header.render(ctx)
