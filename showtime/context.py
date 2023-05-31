@@ -67,6 +67,9 @@ class ScreenContext:
         self.set_bg_colour(bg_colour)
         self.set_text_size(text_size)
         self.fill_with_colour()
+        # Save colour values the context is created with so things can be reset easily.
+        self.initial_fg_colour = fg_colour
+        self.initial_bg_colour = bg_colour
         atexit.register(self.cleanup)
 
     def reset_screen(self):
@@ -154,6 +157,15 @@ class ScreenContext:
         self.sleep()
         self.current_bg_colour = colour
         
+        return self
+    
+    def reset_colours(self):
+        """
+        Reset foreground and background colours to the values used when the ScreenContext was created.
+        """
+        self.set_bg_colour(self.initial_bg_colour)
+        self.set_fg_colour(self.initial_fg_colour)
+
         return self
 
     def fill_with_colour(self, mode="default", start=0, rows=10):
