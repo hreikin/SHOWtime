@@ -14,6 +14,7 @@ class HelloTab(Tab):
         
     def render(self, ctx):
         ctx.write_line("Hello, World!")
+        ctx.reset_colours()
 
 class SystemStats(Tab):
     def __init__(self):
@@ -70,6 +71,7 @@ class SystemStats(Tab):
         
         # Print uptime
         ctx.linebreak().write_line("Uptime:").set_fg_colour(Screen.FG_YELLOW).write_line("%s" % format_timespan(self.uptime)).set_fg_colour(Screen.FG_WHITE)
+        ctx.reset_colours()
     
     def update_sysinfo(self):
         cpu_times = psutil.cpu_percent(percpu=True)
@@ -112,6 +114,7 @@ class DiskUsage(Tab):
                 ctx.set_fg_colour(Screen.FG_RED)
                 
             ctx.write(get_progress_bar(ctx.get_columns()-2, usage_percent)).set_fg_colour(Screen.FG_WHITE).write("]").linebreak()
+        ctx.reset_colours()
         
     def update_disk_usage(self):
         disk_partitions = psutil.disk_partitions()
@@ -178,3 +181,4 @@ class WebsiteUptime(Tab):
                 ctx.set_fg_colour(Screen.FG_GREEN).write_line("UP").linebreak()
             else:
                 ctx.set_fg_colour(Screen.FG_RED).write_line("DOWN for %s" % format_timespan(int(time.time() - self.downtime[website]))).linebreak()
+        ctx.reset_colours()
