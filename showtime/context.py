@@ -66,6 +66,7 @@ class ScreenContext:
         self.set_fg_colour(fg_colour)
         self.set_bg_colour(bg_colour)
         self.set_text_size(text_size)
+        self.fill_with_colour()
         atexit.register(self.cleanup)
 
     def reset_screen(self):
@@ -153,6 +154,24 @@ class ScreenContext:
         self.sleep()
         self.current_bg_colour = colour
         
+        return self
+
+    def fill_with_colour(self, mode="default", start=0, rows=10):
+        """
+        Fill either the entire screen or a selected area with the current background colour.
+        """
+        self.home()
+        if mode == "default":
+            total_rows = self.get_rows()
+            for i in range(0, total_rows):
+                self.write_line("")
+            self.home()
+        if mode == "selection":
+            for i in range(0, start):
+                self.linebreak()
+            for i in range(0, rows):
+                self.write_line("")
+
         return self
     
     def linebreak(self):
