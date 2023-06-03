@@ -11,16 +11,14 @@ class BaseComponent():
 class Tab(BaseComponent):
     def __init__(self, config=dict(), title=str()):
         self.config = config
-        self.title = title
-        super(Tab, self).__init__(self.title)
+        super(Tab, self).__init__(title)
     
     def render(self, ctx):
         return super().render(ctx)
 
 class Header(BaseComponent):
     def __init__(self, title=str()):
-        self.title = title
-        super(Header, self).__init__(self.title)
+        super(Header, self).__init__(title)
 
     def render(self, ctx, tab_idx=0, title="Odroid SHOW", tab_count=1):
         # Print top row (title)
@@ -38,3 +36,14 @@ class Header(BaseComponent):
             
         # Print the empty space and time
         ctx.write(empty_line + time_str)
+
+class Footer(BaseComponent):
+    def __init__(self, title=str()):
+        super(Footer, self).__init__(title)
+    
+    def render(self, ctx):
+        total_rows = ctx.get_rows() 
+        footer_start = total_rows-2
+        ctx.set_cursor_loc(footer_start, 0)
+        ctx.write_line("Footer line 1")
+        ctx.write_line("Footer line 2")
