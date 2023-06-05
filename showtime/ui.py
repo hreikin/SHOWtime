@@ -16,25 +16,42 @@ class Tab(BaseComponent):
         return super().render(ctx)
 
 class Header(BaseComponent):
-    def __init__(self, title=str()):
+    def __init__(self, title="Odroid SHOW", header_type="default"):
+        self.header_type = header_type
         super(Header, self).__init__(title)
 
-    def render(self, ctx, tab_idx=0, title="Odroid SHOW", tab_count=1):
-        # Print top row (title)
-        ctx.home().write_line(title)
-        
-        # Print bottom row (tabs only)
-        ctx.write(f"{tab_idx+1}/{tab_count}")
-        
-        time_str = time.strftime("%H:%M")
-        
-        columns = ctx.get_columns() - len(f"{tab_idx+1}/{tab_count}") - len(time_str)
-        empty_line = ""
-        for i in range(0, columns):
-            empty_line += " "
+    def render(self, ctx, tab_idx=0, tab_count=1):
+        if self.header_type == "default":
+            # Print top row (title)
+            ctx.home().write_line(self.title)
             
-        # Print the empty space and time
-        ctx.write(empty_line + time_str)
+            # Print bottom row (tabs only)
+            ctx.write(f"{tab_idx+1}/{tab_count}")
+            
+            time_str = time.strftime("%H:%M")
+            
+            columns = ctx.get_columns() - len(f"{tab_idx+1}/{tab_count}") - len(time_str)
+            empty_line = ""
+            for i in range(0, columns):
+                empty_line += " "
+                
+            # Print the empty space and time
+            ctx.write(empty_line + time_str)
+        elif self.header_type == "single":
+            # Print top row (title)
+            ctx.home().write(self.title)
+            
+            time_str = time.strftime("%H:%M")
+            
+            columns = ctx.get_columns() - len(f"{self.title}") - len(time_str)
+            empty_line = ""
+            for i in range(0, columns):
+                empty_line += " "
+                
+            # Print the empty space and time
+            ctx.write(empty_line + time_str)
+        else:
+            raise ValueError("Incorrect keyword argument used for `header_type`, available options are 'default', 'single' or None.")
 
 class Footer(BaseComponent):
     def __init__(self, title=str()):
