@@ -8,6 +8,7 @@ import serial
 
 from PIL import Image
 
+from showtime.ui import Header, Footer
 from showtime.utils import split_string_into_chunks
 
 class Screen(object):
@@ -54,25 +55,38 @@ class Screen(object):
     HOME = f"{ESCAPE_CHAR}[H"
 
 class ScreenContext:
-    def __init__(self, port_name="/dev/ttyUSB0", text_size=2, orientation=Screen.LANDSCAPE, fg_colour=Screen.FG_YELLOW, bg_colour=Screen.BG_BLACK):
+    def __init__(self, port_name="/dev/ttyUSB0", text_size=2, orientation=Screen.LANDSCAPE, fg_colour=Screen.FG_YELLOW, bg_colour=Screen.BG_BLACK, header_type="default", footer_type="default"):
         self.port_name = port_name
         self.characters_on_line = 0
+        self.text_size = text_size
+        self.orientation = orientation
+        self.header_type = header_type
+        self.footer_type = footer_type
+        # Save colour values the context is created with so things can be reset easily.
+        self.fg_colour = fg_colour
+        self.bg_colour = bg_colour
+        self.current_fg_colour = fg_colour
+        self.current_bg_colour = bg_colour
         self.buffer = ""
+        self.init_screen()
+    
+    def init_screen(self):
         self.open_port()
         # Wait 6 seconds for the screen to boot up before we start uploading anything
         self.sleep(6)
         # Reset the LCD styling and set the rotation
         self.reset_lcd_styling()
-        self.set_rotation(orientation)
+        self.set_rotation(self.orientation)
         # Set the foreground and background colours
-        self.set_fg_colour(fg_colour)
-        self.set_bg_colour(bg_colour)
-        self.set_text_size(text_size)
+        self.set_fg_colour(self.fg_colour)
+        self.set_bg_colour(self.bg_colour)
+        self.set_text_size(self.text_size)
         self.fill_with_colour()
-        # Save colour values the context is created with so things can be reset easily.
-        self.initial_fg_colour = fg_colour
-        self.initial_bg_colour = bg_colour
         atexit.register(self.cleanup)
+        if self.header_type:
+            self.header = Header(header_type=self.header_type)
+        if self.footer_type:
+            self.footer = Footer(footer_type=self.footer_type)
 
     def reset_screen(self):
         """
@@ -165,8 +179,8 @@ class ScreenContext:
         """
         Reset foreground and background colours to the values used when the ScreenContext was created.
         """
-        self.set_bg_colour(self.initial_bg_colour)
-        self.set_fg_colour(self.initial_fg_colour)
+        self.set_bg_colour(self.bg_colour)
+        self.set_fg_colour(self.fg_colour)
 
         return self
 
