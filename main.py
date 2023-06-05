@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from showtime.context import Screen, ScreenContext
-from showtime.ui import Header, Footer
 
 import atexit
 import time
@@ -15,8 +14,6 @@ parser.add_argument("--port", "-p",
 args = parser.parse_args()
 
 ctx = ScreenContext(args.port, text_size=2, orientation=2, fg_colour=Screen.FG_WHITE, bg_colour=Screen.BG_BLUE)
-header = Header()
-footer = Footer()
+
 while True:
-    header.render(ctx)
-    footer.render(ctx)
+    ctx.run()
