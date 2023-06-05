@@ -26,26 +26,26 @@ class Screen(object):
     LINEFEED = "\x0a"
 
     # Foreground Colours
-    FG_BLACK = 30
-    FG_RED = 31
-    FG_GREEN = 32
-    FG_YELLOW = 33
-    FG_BLUE = 34
-    FG_MAGENTA = 35
-    FG_CYAN = 36
-    FG_WHITE = 37
-    FG_DEFAULT = 39   # Default is black.
+    FG_BLACK = "30"
+    FG_RED = "31"
+    FG_GREEN = "32"
+    FG_YELLOW = "33"
+    FG_BLUE = "34"
+    FG_MAGENTA = "35"
+    FG_CYAN = "36"
+    FG_WHITE = "37"
+    FG_DEFAULT = "39"   # Default is black.
  
     # Background Colours
-    BG_BLACK = 40
-    BG_RED = 41
-    BG_GREEN = 42
-    BG_YELLOW = 43
-    BG_BLUE = 44
-    BG_MAGENTA = 45
-    BG_CYAN = 46
-    BG_WHITE = 47
-    BG_DEFAULT = 49   # Default is black.
+    BG_BLACK = "40"
+    BG_RED = "41"
+    BG_GREEN = "42"
+    BG_YELLOW = "43"
+    BG_BLUE = "44"
+    BG_MAGENTA = "45"
+    BG_CYAN = "46"
+    BG_WHITE = "47"
+    BG_DEFAULT = "49"   # Default is black.
 
     RESET_STYLING = f"{ESCAPE_CHAR}[0m"
     CLOSE_PORT = f"{ESCAPE_CHAR}c{ESCAPE_CHAR}[2s{ESCAPE_CHAR}[1r\r"
@@ -80,8 +80,8 @@ class ScreenContext:
         # Set the foreground and background colours
         self.set_colour(self.fg_colour)
         self.set_colour(self.bg_colour)
+        self.fill_screen(self.bg_colour)
         self.set_text_size(self.text_size)
-        self.fill_with_colour()
         atexit.register(self.cleanup)
         if self.header_type:
             self.header = Header(header_type=self.header_type)
@@ -162,12 +162,12 @@ class ScreenContext:
             return Screen.WIDTH // (self.text_size * 8)
     
     def set_colour(self, colour):
-        if colour in range(30, 40):
+        if colour.startswith("3"):
             self.current_fg_colour = colour
-        elif colour in range(40, 50):
+        elif colour.startswith("4"):
             self.current_bg_colour = colour
         else:
-            raise ValueError("Colour value out of range, must be within the range of 30-49 (inclusive), see the Screen object for available colour options.")
+            raise ValueError("Colour value out of range, must be a foreground or background colour within the range of 30-49 (inclusive), see the Screen object for available colour options.")
         self.buffer += f"{Screen.ESCAPE_CHAR}[{colour}m"
         self.sleep()
 
@@ -177,28 +177,19 @@ class ScreenContext:
         """
         Reset foreground and background colours to the values used when the ScreenContext was created.
         """
-        self.set_colour(self.bg_colour)
-        self.set_colour(self.fg_colour)
+        self.set_colour(self.current_bg_colour)
+        self.set_colour(self.current_fg_colour)
 
         return self
-
-    def fill_with_colour(self, mode="default", start=0, rows=10):
-        """
-        Fill either the entire screen or a selected area with the current background colour.
-        """
-        self.home()
-        if mode == "default":
-            total_rows = self.get_rows()
-            for i in range(0, total_rows):
-                self.write_line("")
-            self.home()
-        if mode == "selection":
-            for i in range(0, start):
-                self.linebreak()
-            for i in range(0, rows):
-                self.write_line("")
-
-        return self
+    
+    def fill_screen(self, colour):
+        if str(colour).startswith("4"):
+            self.set_colour = colour
+            self.buffer += f"{Screen.ESCAPE_CHAR}[{colour}z"
+            self.sleep()
+            return self
+        else:
+            raise ValueError("Colour value out of range, must be a background colour within the range of 40-49 (inclusive), see the Screen object for available colour options.")
     
     def linebreak(self):
         """
@@ -270,10 +261,7 @@ class ScreenContext:
         self.buffer += Screen.HOME
         self.sleep(0.1)
         self.characters_on_line = 0
-        
-        # Colors have to be set again after going home otherwise glitches occur
-        self.set_colour(self.current_bg_colour)
-        self.set_colour(self.current_fg_colour)
+
         return self
     
     def erase_screen(self):
