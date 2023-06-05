@@ -26,26 +26,26 @@ class Screen(object):
     LINEFEED = "\x0a"
 
     # Foreground Colours
-    FG_BLACK = f"{ESCAPE_CHAR}[30m"
-    FG_RED = f"{ESCAPE_CHAR}[31m"
-    FG_GREEN = f"{ESCAPE_CHAR}[32m"
-    FG_YELLOW = f"{ESCAPE_CHAR}[33m"
-    FG_BLUE = f"{ESCAPE_CHAR}[34m"
-    FG_MAGENTA = f"{ESCAPE_CHAR}[35m"
-    FG_CYAN = f"{ESCAPE_CHAR}[36m"
-    FG_WHITE = f"{ESCAPE_CHAR}[37m"
-    FG_DEFAULT = f"{ESCAPE_CHAR}[39m"   # Default is black.
+    FG_BLACK = 30
+    FG_RED = 31
+    FG_GREEN = 32
+    FG_YELLOW = 33
+    FG_BLUE = 34
+    FG_MAGENTA = 35
+    FG_CYAN = 36
+    FG_WHITE = 37
+    FG_DEFAULT = 39   # Default is black.
  
     # Background Colours
-    BG_BLACK = f"{ESCAPE_CHAR}[40m"
-    BG_RED = f"{ESCAPE_CHAR}[41m"
-    BG_GREEN = f"{ESCAPE_CHAR}[42m"
-    BG_YELLOW = f"{ESCAPE_CHAR}[43m"
-    BG_BLUE = f"{ESCAPE_CHAR}[44m"
-    BG_MAGENTA = f"{ESCAPE_CHAR}[45m"
-    BG_CYAN = f"{ESCAPE_CHAR}[46m"
-    BG_WHITE = f"{ESCAPE_CHAR}[47m"
-    BG_DEFAULT = f"{ESCAPE_CHAR}[49m"   # Default is black.
+    BG_BLACK = 40
+    BG_RED = 41
+    BG_GREEN = 42
+    BG_YELLOW = 43
+    BG_BLUE = 44
+    BG_MAGENTA = 45
+    BG_CYAN = 46
+    BG_WHITE = 47
+    BG_DEFAULT = 49   # Default is black.
 
     RESET_STYLING = f"{ESCAPE_CHAR}[0m"
     CLOSE_PORT = f"{ESCAPE_CHAR}c{ESCAPE_CHAR}[2s{ESCAPE_CHAR}[1r\r"
@@ -78,8 +78,8 @@ class ScreenContext:
         self.reset_lcd_styling()
         self.set_rotation(self.orientation)
         # Set the foreground and background colours
-        self.set_fg_colour(self.fg_colour)
-        self.set_bg_colour(self.bg_colour)
+        self.set_colour(self.fg_colour)
+        self.set_colour(self.bg_colour)
         self.set_text_size(self.text_size)
         self.fill_with_colour()
         atexit.register(self.cleanup)
@@ -161,32 +161,24 @@ class ScreenContext:
         else:
             return Screen.WIDTH // (self.text_size * 8)
     
-    def set_fg_colour(self, colour):
-        """
-        Set foreground/text color to one of seven colors defined in Screen, eg. Screen.FG_CYAN
-        """
-        self.buffer += f"{colour}"
+    def set_colour(self, colour):
+        if colour in range(30, 40):
+            self.current_fg_colour = colour
+        elif colour in range(40, 50):
+            self.current_bg_colour = colour
+        else:
+            raise ValueError("Colour value out of range, must be within the range of 30-49 (inclusive), see the Screen object for available colour options.")
+        self.buffer += f"{Screen.ESCAPE_CHAR}[{colour}m"
         self.sleep()
-        self.current_fg_colour = colour
-        
-        return self
-    
-    def set_bg_colour(self, colour):
-        """
-        Set background color to one of seven colors defined in Screen, eg. Screen.BG_CYAN
-        """
-        self.buffer += f"{colour}"
-        self.sleep()
-        self.current_bg_colour = colour
-        
+
         return self
     
     def reset_colours(self):
         """
         Reset foreground and background colours to the values used when the ScreenContext was created.
         """
-        self.set_bg_colour(self.bg_colour)
-        self.set_fg_colour(self.fg_colour)
+        self.set_colour(self.bg_colour)
+        self.set_colour(self.fg_colour)
 
         return self
 
@@ -280,7 +272,8 @@ class ScreenContext:
         self.characters_on_line = 0
         
         # Colors have to be set again after going home otherwise glitches occur
-        self.set_bg_colour(self.current_bg_colour).set_fg_colour(self.current_fg_colour)
+        self.set_colour(self.current_bg_colour)
+        self.set_colour(self.current_fg_colour)
         return self
     
     def erase_screen(self):
