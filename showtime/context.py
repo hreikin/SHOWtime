@@ -87,6 +87,12 @@ class ScreenContext:
             self.header = Header(header_type=self.header_type)
         if self.footer_type:
             self.footer = Footer(footer_type=self.footer_type)
+    
+    def run(self):
+        if self.header_type:
+            self.header.render(self)
+        if self.footer_type:
+            self.footer.render(self)
 
     def reset_screen(self):
         """
