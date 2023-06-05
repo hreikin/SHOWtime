@@ -1,10 +1,6 @@
 #!/usr/bin/env python
-
 from showtime.context import Screen, ScreenContext
 
-import atexit
-import time
-import sys
 import argparse
 
 parser = argparse.ArgumentParser()
