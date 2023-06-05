@@ -54,12 +54,20 @@ class Header(BaseComponent):
             raise ValueError("Incorrect keyword argument used for `header_type`, available options are 'default', 'single' or None.")
 
 class Footer(BaseComponent):
-    def __init__(self, title=str()):
+    def __init__(self, title=str(), footer_type="default"):
+        self.footer_type = footer_type
         super(Footer, self).__init__(title)
     
     def render(self, ctx):
-        total_rows = ctx.get_rows() 
-        footer_start = total_rows-2
-        ctx.set_cursor_loc(footer_start, 0)
-        ctx.write_line("Footer line 1")
-        ctx.write_line("Footer line 2")
+        total_rows = ctx.get_rows()
+        if self.footer_type == "default":
+            footer_start = total_rows-2
+            ctx.set_cursor_loc(footer_start, 0)
+            ctx.write_line("Footer line 1")
+            ctx.write_line("Footer line 2")
+        elif self.footer_type == "single":
+            footer_start = total_rows-1
+            ctx.set_cursor_loc(footer_start, 0)
+            ctx.write_line("Footer line 1")
+        else:
+            raise ValueError("Incorrect keyword argument used for `footer_type`, available options are 'default', 'single' or None.")
